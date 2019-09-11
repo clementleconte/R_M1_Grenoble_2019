@@ -227,7 +227,7 @@ table(noel$dest)
 #Exercice 4 : plot des destinations de noel
 ```{r}
 ggplot(noel, aes(dest))+geom_bar()+coord_flip()
-
+```
 
 ## Sort data: `arrange()`
 
@@ -240,7 +240,7 @@ ggplot(noel, aes(dest))+geom_bar()+coord_flip()
 ## `arrange()`
 
 ```{r}
-arrange(df, dep_time)
+arrange(df, month, day)
 ```
 
 
@@ -251,6 +251,11 @@ arrange(df, dep_time)
 ```{r}
 select(df, dep_time, carrier)
 ```
+# select négativement
+```{r}
+select(df, ends_with("y"))
+select(df, contains("y"))
+```
 
 ## `select()` examples
 
@@ -259,6 +264,13 @@ select(df, dep_time, carrier)
 - you want to exploit naming patterns: you use `starts_with("string")`, `ends_with("string")`, `contains("string")`
 - you want to select all variables: you use `everything()` 
 - `everything` is useful to *reorder variables*
+
+## Exercice 5 filter + select : créer un jeu de données quatre_juillet qui contient tous les vols du 4 juillet et seulement leur départ et destination
+
+```{r}
+quatre_juillet <- filter(df, day == 4 & month == 7)
+quatre_juillet <- select(quatre_juillet, origin, dest)
+```
 
 ## renaming variables: `rename()`
 
