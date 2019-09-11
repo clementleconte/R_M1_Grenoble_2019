@@ -262,6 +262,21 @@ select(df, dep_time, carrier)
 
 ## `select()` examples
 
+## select negativement, enleve des variables
+
+```{r}
+select(df, -dep_time, -day)
+```
+
+# Créer un jeu de données quatre_juillet qui contient tous les vols du 4 juillet et seulement leur départ et destination
+
+```{r}
+temps <-filter(df, month == 7 & day == 4)
+exer <- select(temps, dep_time , arr_time)
+
+```
+
+
 - you want more than one variable: you list all variables by bare name: `select(data, var1, var2, var3, ...)`
 - you want to exclude (drop) some variables: you use the minus sign: `select(data, -var1, -var2, ...)`
 - you want to exploit naming patterns: you use `starts_with("string")`, `ends_with("string")`, `contains("string")`
