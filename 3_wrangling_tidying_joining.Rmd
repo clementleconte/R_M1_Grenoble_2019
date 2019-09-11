@@ -191,12 +191,14 @@ df
 ## Filtering
 
 > all December flights
+
 ```{r}
 filter(df, month == 12)
 ```
 
 ## Filtering over multiple criteria
 > all Christmas flights departed around midday
+
 ```{r}
 filter(df, month == 12 & day == 25 & dep_time>1100 & dep_time <1300)
 ```
@@ -208,6 +210,32 @@ filter(df, month == 12 & day == 25 & dep_time>1100 & dep_time <1300)
 - then you should do `filter(df, month == 6 | month == 7 | month == 8)`
 - can  become cumbersome
 - you can use an alternative notation, `filter(df, month %in% c(6,7,8))`
+
+## Exercice1: vol parties de la Guardia le 17 juillet
+
+```{r}
+filter(df,origin == "LGA", month == 7 & day == 17)
+```
+
+## Exercice2: tous les vols qui ne sont PAS allez à Paris (CDG)
+
+```{r}
+filter(df, dest != "CDG")
+```
+
+## Exercice3 : toutes les destination des vols de Noel midi
+
+```{r}
+noel <-filter(df, month == 12 & day == 25 & dep_time>1100 & dep_time <1300)
+
+table(noel$dest)
+```
+
+## Exercice4: plot des destinations de noel, avec destination en ordonnée
+
+```{r}
+ggplot(noel, aes(dest))+ geom_bar()+ coord_flip()
+```
 
 ## Sort data: `arrange()`
 
