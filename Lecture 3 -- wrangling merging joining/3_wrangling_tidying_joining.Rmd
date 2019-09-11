@@ -250,10 +250,10 @@ ggplot(noel, aes(dest))+
 - 2. it lets you save the new order to a data frame
 - this can be useful when looking for special observations, like the first flight of each day
 
-## `arrange()`
+## `arrange()`
 
 ```{r}
-arrange(df, dep_time)
+arrange(df, month, day)
 ```
 
 
@@ -265,6 +265,13 @@ arrange(df, dep_time)
 select(df, dep_time, carrier)
 ```
 
+## select negaativement
+
+```{r}
+select(df, contains("del"))
+```
+
+
 ## `select()` examples
 
 - you want more than one variable: you list all variables by bare name: `select(data, var1, var2, var3, ...)`
@@ -272,6 +279,19 @@ select(df, dep_time, carrier)
 - you want to exploit naming patterns: you use `starts_with("string")`, `ends_with("string")`, `contains("string")`
 - you want to select all variables: you use `everything()` 
 - `everything` is useful to *reorder variables*
+
+## Exercice sur filter + select
+
+> créer un jeu de données quatre_juillet qui contient tous les vols du 4 juillet et seulement leur départ et destination
+
+```{r}
+temp <- filter(df, month == 7 & day == 4)
+
+quatre_juillet <- select(temp, origin, dest)
+
+quatre_juillet
+```
+
 
 ## renaming variables: `rename()`
 
