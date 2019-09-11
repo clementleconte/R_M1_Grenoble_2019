@@ -104,3 +104,66 @@ df <- flights
 ## meta-exercice 1
 
 > **re-faites** *tous* les exercices ci-dessus en utilisant l'opérateur 'et après' / pipe `%>%`
+
+## Exercice 10
+
+> trouvez le maximum retard au depart par aéroport pour JFK et LGA pour chaque jour de l'an. Plottez les résultats. Est-ce que les retards sont corrélés? Montrez la corrélation avec un plot.
+
+```{r ex10}
+
+```
+
+
+## Exercice 11
+
+> de quel aéroport partent les vols à plus longue distance?
+
+```{r ex11}
+
+```
+
+# `join_...()` family of functions
+
+> first run thi setup R code chunk. It will load in your workspace 3 data frames:
+
+- **airports**: avec données sur les aéroports américains
+- **flights**: qu'on connait déjà
+- **planes**: avec les données pour chaque avion
+
+```{r setup_join}
+planes <- planes
+flights <- flights
+airports <- airports
+```
+
+## Exercice 12
+
+> est-ce que les routes plus longues sont desservies apr les avions les plus modernes?
+
+*notes*: utilisez `left_join()` et mergez les dataframes `flights` et `planes`
+
+```{r ex12}
+
+```
+
+## Exercice 13
+
+> combien de vols qui partent des trois aéroport de NY atterrsient dans des destinations  lus de 1000m s.n.m.?
+
+```{r ex13}
+table1
+```
+
+
+# creating tidy data: reshape with `gather()` and `spread()`
+
+## Exercice 14
+
+> tidy world_bank_pop dataset so that 'year' is a variable and for each country and each year you have urban population and urban population growh only. Plot as a geom_line the total population for each country over the years.
+
+```{r ex14}
+
+  
+```
+
+
