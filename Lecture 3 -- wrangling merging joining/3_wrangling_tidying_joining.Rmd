@@ -212,6 +212,7 @@ filter(df, month == 12 & day == 25 & dep_time>1100 & dep_time <1300)
 - you can use an alternative notation, `filter(df, month %in% c(6,7,8))`
 
 <<<<<<< HEAD:Lecture 3 -- wrangling merging joining/3_wrangling_tidying_joining.Rmd
+<<<<<<< HEAD:Lecture 3 -- wrangling merging joining/3_wrangling_tidying_joining.Rmd
 ## Exercice 1: vol parties de La Guardia le 17 juillet
 
 ```{r}
@@ -268,6 +269,26 @@ ggplot(noel, aes(dest))+ geom_bar()+ coord_flip()
 ```
 
 >>>>>>> 02ade750a03bc97e809c27d3f284828e5f30a695:3_wrangling_tidying_joining.Rmd
+=======
+##Exercice 1 : vol parties de la guardia le 17 juillet
+```{r}
+filter(df, month == 7 & day == 17 & origin == 'LGA')
+```
+## Exercice 2 : tous les vols qui ne sont PAS allez à Paris
+```{r}
+filter(df, dest != 'CDG')
+```
+#Exercice 3 : liste de toutes les destinations de noel midi
+```{r}
+noel <- filter(df, month == 12 & day == 25 & dep_time>1100 & dep_time <1300)
+table(noel$dest)
+```
+#Exercice 4 : plot des destinations de noel
+```{r}
+ggplot(noel, aes(dest))+geom_bar()+coord_flip()
+```
+
+>>>>>>> 6f37131123cf0db103ea91468c549795cf2e119d:3_wrangling_tidying_joining.Rmd
 ## Sort data: `arrange()`
 
 - `arrange()` lets you sort data
@@ -289,6 +310,11 @@ arrange(df, month, day)
 
 ```{r}
 select(df, dep_time, carrier)
+```
+# select négativement
+```{r}
+select(df, ends_with("y"))
+select(df, contains("y"))
 ```
 
 ## select negaativement
@@ -321,6 +347,7 @@ exer <- select(temps, dep_time , arr_time)
 - you want to select all variables: you use `everything()` 
 - `everything` is useful to *reorder variables*
 
+<<<<<<< HEAD:Lecture 3 -- wrangling merging joining/3_wrangling_tidying_joining.Rmd
 ## Exercice sur filter + select
 
 > créer un jeu de données quatre_juillet qui contient tous les vols du 4 juillet et seulement leur départ et destination
@@ -334,6 +361,15 @@ quatre_juillet
 ```
 
 
+=======
+## Exercice 5 filter + select : créer un jeu de données quatre_juillet qui contient tous les vols du 4 juillet et seulement leur départ et destination
+
+```{r}
+quatre_juillet <- filter(df, day == 4 & month == 7)
+quatre_juillet <- select(quatre_juillet, origin, dest)
+```
+
+>>>>>>> 6f37131123cf0db103ea91468c549795cf2e119d:3_wrangling_tidying_joining.Rmd
 ## renaming variables: `rename()`
 
 - `rename()` is a version of `select()` that keeps all variables
