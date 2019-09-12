@@ -211,6 +211,7 @@ filter(df, month == 12 & day == 25 & dep_time>1100 & dep_time <1300)
 - can  become cumbersome
 - you can use an alternative notation, `filter(df, month %in% c(6,7,8))`
 
+<<<<<<< HEAD:Lecture 3 -- wrangling merging joining/3_wrangling_tidying_joining.Rmd
 ## Exercice 1: vol parties de La Guardia le 17 juillet
 
 ```{r}
@@ -218,19 +219,36 @@ filter(df, origin == "LGA" & month == 7 & day == 17)
 ```
 
 ## Exercice 2: tous les vols qui ne sont PAS allez à PARIS (CDG)
+=======
+## Exercice1: vol parties de la Guardia le 17 juillet
+
+```{r}
+filter(df,origin == "LGA", month == 7 & day == 17)
+```
+
+## Exercice2: tous les vols qui ne sont PAS allez à Paris (CDG)
+>>>>>>> 02ade750a03bc97e809c27d3f284828e5f30a695:3_wrangling_tidying_joining.Rmd
 
 ```{r}
 filter(df, dest != "CDG")
 ```
 
+<<<<<<< HEAD:Lecture 3 -- wrangling merging joining/3_wrangling_tidying_joining.Rmd
 ## Exerice 3: liste de toutes les destinations des vols de Noel midi
 
 ```{r}
 noel <- filter(df, month == 12 & day == 25 & dep_time>1100 & dep_time <1300)
+=======
+## Exercice3 : toutes les destination des vols de Noel midi
+
+```{r}
+noel <-filter(df, month == 12 & day == 25 & dep_time>1100 & dep_time <1300)
+>>>>>>> 02ade750a03bc97e809c27d3f284828e5f30a695:3_wrangling_tidying_joining.Rmd
 
 table(noel$dest)
 ```
 
+<<<<<<< HEAD:Lecture 3 -- wrangling merging joining/3_wrangling_tidying_joining.Rmd
 ## Exercice 4: plot des destinations de noel
 
 ```{r}
@@ -242,6 +260,14 @@ ggplot(noel, aes(dest))+
 
 
 
+=======
+## Exercice4: plot des destinations de noel, avec destination en ordonnée
+
+```{r}
+ggplot(noel, aes(dest))+ geom_bar()+ coord_flip()
+```
+
+>>>>>>> 02ade750a03bc97e809c27d3f284828e5f30a695:3_wrangling_tidying_joining.Rmd
 ## Sort data: `arrange()`
 
 - `arrange()` lets you sort data
@@ -273,6 +299,21 @@ select(df, contains("del"))
 
 
 ## `select()` examples
+
+## select negativement, enleve des variables
+
+```{r}
+select(df, -dep_time, -day)
+```
+
+# Créer un jeu de données quatre_juillet qui contient tous les vols du 4 juillet et seulement leur départ et destination
+
+```{r}
+temps <-filter(df, month == 7 & day == 4)
+exer <- select(temps, dep_time , arr_time)
+
+```
+
 
 - you want more than one variable: you list all variables by bare name: `select(data, var1, var2, var3, ...)`
 - you want to exclude (drop) some variables: you use the minus sign: `select(data, -var1, -var2, ...)`
