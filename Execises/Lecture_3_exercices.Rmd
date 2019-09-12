@@ -142,7 +142,14 @@ df %>%
 > trouvez le maximum retard au depart par aéroport pour JFK et LGA pour chaque jour de l'an. Plottez les résultats. Est-ce que les retards sont corrélés? Montrez la corrélation avec un plot.
 
 ```{r ex10}
-
+df %>%
+  filter(origin %in% c("JFK", "LGA")) %>% 
+  group_by(origin,month, day) %>%
+  summarize(max_retard = max(dep_delay, na.rm = T)) %>% 
+  mutate(day_year = paste(day, month, sep = '.')) %>% 
+  group_by(origin) %>% 
+  mutate(day_absolute = row_number()) %>% 
+  ggplot(aes(x = day_absolute, y = max_retard, color = origin))+geom_point()
 ```
 
 
@@ -151,6 +158,7 @@ df %>%
 > de quel aéroport partent les vols à plus longue distance?
 
 ```{r ex11}
+
 
 ```
 
@@ -175,15 +183,26 @@ airports <- airports
 *notes*: utilisez `left_join()` et mergez les dataframes `flights` et `planes`
 
 ```{r ex12}
-
+df  %>% 
+  select(tailnum, distance) %>% 
+  left_join(planes, by = "tailnum") %>% 
+  mutate(dist_discrete = cut(distance, breaks = 10)) %>% 
+ggplot(aes(x=dist_discrete, y = year))+geom_boxplot()
 ```
 
 ## Exercice 13
 
-> combien de vols qui partent des trois aéroport de NY atterrsient dans des destinations  lus de 1000m s.n.m.?
+> combien de vols qui partent des trois aéroport de NY atterrsient dans des destinations au dessus de 1000m s.n.m.?
 
 ```{r ex13}
-table1
+df %>% 
+  select(origin, dest) %>% 
+  left_join(airports, by = c("dest" =  "faa")) %>% 
+  mutate(altitude_m=alt/3.28) %>% 
+  filter(altitude_m > 1000) %>% 
+  ggplot(aes(origin))+geom_bar()
+
+  
 ```
 
 
