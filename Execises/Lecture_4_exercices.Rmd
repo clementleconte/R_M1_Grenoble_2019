@@ -10,10 +10,11 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(nycflights13)
 
-planes <- planes
-flights <- flights
-airports <- airports
+planess <- planes
+flightss <- flights
+airportss <- airports
 ```
+
 
 
 # révisons: `left_join()` + tout le reste
@@ -23,7 +24,14 @@ airports <- airports
 > en utilisant les jeux de données planes, flights et airports, trouver combien de vols partis de chacun de trois aéroports de NYC a atteri à Denver (DEN) en mai et a été desservi par des avions produits entre 2005 et 2010.
 
 ```{r ex1}
-
+flights %>% 
+  filter(dest == "DEN") %>% 
+  filter(month == 5) %>% 
+  select(tailnum, origin, dest) %>% 
+  left_join(planes, by = "tailnum") %>% 
+  filter(year >= 2005 & year <= 2010) %>% 
+  group_by(origin) %>% 
+  summarize(reponse = n())
 ```
 
 
@@ -38,7 +46,15 @@ airports <- airports
 
 
 ```{r ex2}
+#1 dire à gather quelles variables reuceillir
 
+table4b %>% 
+  gather('1999','2000',key = year, value = population)
+
+# OU, dire à gather les variables qu'on ne veut pas recueillir
+
+table4b %>% 
+  gather(-country, key = year, value = population)
   
 ```
 
@@ -48,9 +64,15 @@ airports <- airports
 > visualisez et importez dans votre espace de travail les jeux de données `table1` et `table2`. Ils contiennent les mêmes informations. Manipulez `table1` pour obtenir `table2`
 
 ```{r ex3}
+table1 <- table1
+table2 <- table2
+table1 %>% 
+  gather('cases', 'population', key = type ,value = count) %>% 
+  arrange(country, year)
 
-
-
+# OU dire  gather qu'on ne veut pas recueillir
+table1 %>% 
+gather(-country, -year, key = type, value = count)
 ```
 
 
@@ -59,8 +81,11 @@ airports <- airports
 > reordonnez `world_bank_pop` afin que 'year' soit une variable et pour chaque pays et whaque année vous avez deux observations, population urbaine et croissance de la population. Sauvegardez votre résultat dans un objet dans votre workplace.
 
 ```{r ex4}
+#ça marche pas mais le code est bon
+wbp <- world_bank_pop
 
-  
+wbp %>% 
+  gather(-country, -indicator, key = year, value = values)
 ```
 
 
@@ -69,16 +94,18 @@ airports <- airports
 > isualisez et importez dans votre espace de travail les jeux de données `table1` et `table2`. Ils contiennent les mêmes informations. Manipulez `table2` pour obtenir `table1`
 
 ```{r ex5}
-
+table2 %>%
+  spread(key = type, value = count)
   
 ```
 
 ## Exercice 6: `spread()`
 
-> utilisez le jeu de données issu de l'exercice 4. Créez un jeu de données 'long' qui montre la croissance de la population urbaine de tous les pays sur les années 2000 et 2001, avec une colonne pour chacune de ces années.
+> utilisez le jeu de données issu de l'exercice 4. Créez un jeu de données 'large' qui montre la croissance de la population urbaine de tous les pays sur les années 2000 et 2001, avec une colonne pour chacune de ces années.
 
 ```{r ex6}
-
+wbp_long %>% 
+  spread(key = year, value = values) 
 ```
 
 
@@ -90,7 +117,8 @@ airports <- airports
 > utilisez le jeu de données `table3`. séparez la variable 'rate' dans les deux variables 'cases' et 'population'
 
 ```{r ex7}
-
+table3 %>% 
+  separate(col = rate, into = c("case","population"), sep = "/")
 ```
 
 
@@ -99,7 +127,9 @@ airports <- airports
 > utilisez `world_bank_pop` et créez une variable qui vous permette de distinguer entre indicateurs 'pop' and 'urban' et une autre pour distinguer enre indicateurs de 'total' and 'growth'.
 
 ```{r ex8}
-
+wbp %>% 
+  separate(indicator, into = c("poubelle", "urb_pop","tot_grow")) %>% 
+  selcet(-poubelle)
   
 ```
 
@@ -109,7 +139,8 @@ airports <- airports
 > utilisez le jeu de données `table5` et mergez dans une seule variable 'année' les colones 'century' et 'year'
 
 ```{r ex9}
-
+table5 %>% 
+  unite("annee", century, year, sep ="")
   
 ```
 
@@ -119,7 +150,8 @@ airports <- airports
 > utilisez le jeu de données `flights` et créez une variable unique 'date' pour jour, mois et année 
 
 ```{r ex10}
-
+flights %>% 
+  unite(date, day, month, year, sep="/")
   
 ```
 
@@ -138,7 +170,12 @@ On va ici utiliser le jeu de données `babynames` (dans le package `babynames`).
 > plottez (geom_line) le nombre de Mary aux EE.UU. sur toute la longueur des données.
 
 ```{r baby1}
-
+library(babynames)
+df <- babynames
+df %>% 
+filter(name == "Mary") %>% 
+  filter(sex == "F") %>% 
+  ggplot(aes(x = year, y = prop))+geom_line()
 ```
 
 ## babynames ex2: 'Mary vs. 'Anna' (`filter` + `ggplot`)
@@ -146,7 +183,10 @@ On va ici utiliser le jeu de données `babynames` (dans le package `babynames`).
 > plottez (geom_line) le nombre de Mary et de Anna aux EE.UU. sur toute la longueur des données. Quand est-ce que Anna est devenue plus populaire que Mary (si jamais)? COloriez différemment les lignes pour Anna et Mary
 
 ```{r baby2}
-
+df %>% 
+filter(name == "Mary" | name =="Anna") %>% 
+  filter(sex == "F") %>% 
+  ggplot(aes(year, prop, color = name))+geom_line()
 ```
 
 ## babynames ex3: prénoms de garçons
@@ -154,6 +194,11 @@ On va ici utiliser le jeu de données `babynames` (dans le package `babynames`).
 > isolez le prénom le plus populaire pour les garçons pour chaque année. Quel nom était le plus utilisé en 1890? et en 1990?
 
 ```{r baby3}
+df %>% 
+    filter(sex == "M") %>% 
+    group_by(year) %>% 
+    filter(n == max(n)) %>% 
+  filter(year == 1890 | year == 1990)
 
 ```
 
@@ -163,6 +208,10 @@ On va ici utiliser le jeu de données `babynames` (dans le package `babynames`).
 > est-ce que les prénoms étaient plus concentrés dans le passé (moins de noms, plus de gens pour chaque nom) qu'aujours'hui? Calculez le nombre de noms, séparément pour hommes et femmes, par année. Plottez les résultats comme une geom_line, colorié par sexe. Est-ce que le nombre de noms augmente ou diminue? plus pour les filles ou pour les garçons?
 
 ```{r baby4}
+df %>% 
+  group_by(year, sex) %>%
+  summarise(n=n()) %>% 
+  ggplot(aes(x = year, y = n, color = sex))+geom_line()
 
 ```
 
@@ -172,6 +221,13 @@ On va ici utiliser le jeu de données `babynames` (dans le package `babynames`).
 > créez un tableau avec le prénom le plus populaire (en valeur absolue) pour chaque **décennie** du 20ème siècle, pour les filles et les garçons. Faites un tableau 'large' avec comme variable 'décennie', 'M' et 'F'
 
 ```{r baby5}
+df %>% 
+  mutate(decade = year %/% 10)*10 %>% 
+  group_by(decade,sex) %>% 
+  filter (n == max(n)) %>% 
+  select(decade, sex, name) -> temp
+temp %>% 
+  spread(key = sex, value = name)
 
 ```
 
@@ -180,7 +236,9 @@ On va ici utiliser le jeu de données `babynames` (dans le package `babynames`).
 > créez un plot qui montre, dans un facet (subplot) pour chaque prénom (lignes) et par sèxe (colonnes), le profil au cours du temps des prénoms suivants: "Mary" "John"   "Robert"  "James"    "Linda"    "Michael"  "David"    "Lisa"     "Jennifer" "Jessica"  "Ashley"   "Emily"    "Jacob"    "Emma" "Isabella" "Sophia"   "Noah"     "Liam" 
 
 ```{r baby6}
-
+df %>% 
+  filter(name %in% c("Mary", "John",   "Robert",  "James",    "Linda",    "Michael",  "David",    "Lisa",     "Jennifer", "Jessica",  "Ashley",   "Emily",    "Jacob",    "Emma", "Isabella" ,"Sophia"   ,"Noah"     ,"Liam")) %>% 
+  ggplot(aes(x = year, y = prop, color = name))+geom_line()+facet_grid(name~sex) -> plot
 ```
 
 
