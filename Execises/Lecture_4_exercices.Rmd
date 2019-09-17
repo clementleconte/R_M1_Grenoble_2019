@@ -238,7 +238,7 @@ temp %>%
 ```{r baby6}
 df %>% 
   filter(name %in% c("Mary", "John",   "Robert",  "James",    "Linda",    "Michael",  "David",    "Lisa",     "Jennifer", "Jessica",  "Ashley",   "Emily",    "Jacob",    "Emma", "Isabella" ,"Sophia"   ,"Noah"     ,"Liam")) %>% 
-  ggplot(aes(x = year, y = prop, color = name))+geom_line()+facet_grid(name~sex) -> plot
+  ggplot(aes(x = year, y = prop, color = name))+geom_line()+facet_grid(name~sex) 
 ```
 
 
