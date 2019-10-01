@@ -1,0 +1,152 @@
+---
+title: "Explosions nucléaires"
+author: "Clément Leconte"
+date: "02/10/2019"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction
+
+Une arme nucléaire est une arme non conventionnelle qui utilise l'énergie dégagée par la fission de noyaux atomiques lourds (bombes A), ou par une combinaison de ce phénomène avec celui de la fusion de noyaux atomiques légers (bombes H). L'énergie libérée par l'explosion s'exprime par son équivalent en TNT.
+
+L'arme nucléaire n'a été utilisée de façon opérationnelle qu'à 2 reprises, par les États-Unis lors des bombardements des villes japonaises de Hiroshima et de Nagasaki durant la Seconde Guerre mondiale, entraînant environ trois cent mille morts. Ses effets destructeurs sont principalement dus au souffle, comme pour les explosifs classiques, mais également aux brûlures et incendies provoqués par sa température extrême, et à l'effet des radiations. En raison de ces capacités de destruction sans commune mesure avec celles des armes conventionnelles, l'arme nucléaire devient dès la fin des années qui suivent son emploi contre le Japon, une arme de dissuasion visant à décourager toute attaque contre les intérêts vitaux d'une nation par crainte pour l'agresseur de subir en retour des destructions massives qui excéderaient de loin les avantages escomptés.
+
+Cependant, bien qu'utilisée seulement 2 fois contre l'humanité, des centaines d'explosions nucléaires ont vu le jour au cours du 20ème siècle, mais alors par qui, pourquoi, et où ?
+Nous allons tenter de répondre à ces questions grâce aux données mises à diposition par Stockholm International Peace Research Institute (SIPRI).
+
+```{r echo=TRUE, message=FALSE}
+
+#Importation des données
+
+nuclear_explosions <- readr::read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-08-20/nuclear_explosions.csv")
+
+library(tidyverse)
+```
+## Les principaux acteurs 
+
+Aujourd'hui, en 2019, 9 états possèdent l'arme nucléaire (les Etats-Unis, la Russie, le Royaume-Uni, la France, la Chine, l'Inde, le Pakistan, Israël et la Corée du Nord). Mais qui ont été les principaux organisateurs d'explosions nucléaires au cours du 20ème siècle ?
+
+
+```{r pressure, echo=TRUE}
+#Nettoyage du nom des pays
+data <- nuclear_explosions %>%
+  mutate(
+    country = fct_recode(country,
+      "Chine" = "CHINA",
+      "France" = "FRANCE",
+      "Inde" = "INDIA",
+      "Pakistan" = "PAKIST",
+      "Royaume-Uni" = "UK",
+      "Etats-Unis" = "USA",
+      "Russie" = "USSR")) 
+# graphique 1
+data %>% 
+  group_by(country) %>%
+  summarise(n=n()) %>% 
+  ggplot(aes(x = reorder(country, -n), y = n))+geom_bar(stat="identity") +
+  geom_text(aes(label = n), position = position_dodge(width = 0.9), vjust = -0.2) +
+  labs(x = "Pays",
+       y = "Nombre d'explosions nuéclaires",
+       title = "Nombre d'explosion nucléaire total par pays",
+       caption = "@clemleconte -- sept2019") 
+
+```
+<br/> Sur ce premier graphique, représentant le nombre d'explosion nucléaire par pays, nous pouvons voir qu'il ressort 3 acteurs principaux. Il s'agit des Etats-Unis avec plus de 1000 explosions organisées, suivis de la Russie (auparavant URSS) avec un peu plus de 714 explosions nucléaires. Enfin on trouve la France avec 210 explosions. Il y a ensuite d'autres pays qui en ont organisé, comme la Chine, le Royaume-Unie ou le Pakistan, mais leur nombre est dérisoir comparé à celles orchestrées par les US et l'URSS.
+
+```{r}
+#graphique 2
+data %>% 
+  group_by(country, year) %>%
+    summarise(n=n()) %>% 
+  ggplot(aes(x = year, y = n, fill = country))+geom_bar(stat="identity") +
+  labs(x = "Année",
+       y = "Nombre d'explosions nuéclaires",
+       title = "Nombre d'explosion nucléaire par pays et dans le temps",
+       caption = "@clemleconte -- sept2019") 
+```
+<br/> Sur ce second graphique, nous pouvons observer le nombre d'explosion nucléaire par pays et dans le temps. On retrouve comme sur le graphique précédent que ce sont les Etats-unis et la Russie qui ont participé au plus d'explosions nucléaires. Il semblerait que cela ait débuté à partir des années 50 (bien que les premières explosions ont eu lieu durant la seconde guerre mondiale, organisées par les Etats-Unis), au commencement de la guerre froide. Les premières années ont été une véritable course à l'armement. Cette course s'est maintenue de 1965 jusqu'à 1985, puis au fur et à mesure que la guerre froide s'attenua, les explosions diminuèrent également, jusqu'à quasiment disparaitre dans la dernière décennie du 20ème siècle.
+
+## L'objectif de toutes ces explosions nucléaires
+Nous venons de voir précédemment, que seules 2 explosions nucléaires avaient été une réelle application de l'arme nucléaire, alors que près de 2000 explosions ont été enregistrées jusqu'à aujourd'hui. Mais alors quels buts ont eu toutes ces explosions ?
+```{r}
+#graphique 3
+data %>%
+  group_by(purpose) %>% 
+  summarise(n=n()) %>% 
+  filter(n >= 5) %>%
+  ggplot(aes(x = reorder(purpose, n), y = n))+geom_bar(stat = "identity") +
+  coord_flip() + 
+  geom_text(aes(label = n), position = position_dodge(width = 0.9), hjust=0) +
+  labs(x = "Objectif",
+       y = "Nombre d'explosions nucléaires",
+       title = "Nombre d'explosions nucléaires en fonction de son objectif",
+       caption = "@clemleconte -- sept2019") 
+
+```
+<br/> Ce graphique nous permet de voir que la très grande majorité des explosions nucléaires (1495) ont été réalisées lors de programmes de développement d'armes. On a ensuite 181 explosions réalisées par la France, les Etats-Unis et l'Angleterre afin d'évaluer l'effet d'une détonation nucléaire sur différentes cibles. 153 ont été réalisées dans le cadre de Peaceful Nuclear Explosion, qui correspond à l'utilisation d'explosion nucléaire à des fins autres que la guerre, comme par exemple dans le domaine de l'aérospatial. On trouve également d'autres objectifs comme des tests de sécurité de l'arme nucléaire en cas d'accident (71), des exercices militaires, ou des tests d'avantages orientés au niveau scientifique.
+
+## La localisation de ces explosions
+Maintenant que nous nous sommes interessés aux principaux acteurs mais également aux objectifs de ces explosions nucléaires, une question subsiste, compte tenu de la puissance des explosions nucléaires, où ont-elles eu lieu ?
+
+```{r, fig.width=12.5, fig.height=7.5, warning=FALSE}
+
+
+
+#Theme
+map_theme <- 
+  theme(
+    plot.title = element_text(size = 24, hjust = 0.5),
+    axis.title.x = element_blank(),
+    axis.title.y = element_blank(),
+    axis.text = element_blank(),
+    axis.ticks = element_blank(),
+    axis.line = element_blank(),
+    strip.text = element_text(size = 18),
+    legend.title = element_text("Countries", size = 12),
+    legend.text = element_text(size = 12),
+    panel.background = element_rect(fill = "grey95"),
+    strip.background = element_rect(
+      color = "grey10",
+      fill = "grey75",
+      size = 1.5,
+      linetype = "solid")
+  )
+
+# graphique 4
+
+
+plot1 <- data %>%
+  ggplot(aes(longitude, latitude, color = country)) +
+  borders("world") + #ajoute le fond de la carte
+  geom_point(size = 5, alpha = 0.8) 
+plot1 <- plot1 + 
+  map_theme + #applique le thème créé plus tôt
+  labs(color = "Country",
+       title = "Les explosions nucléaires à travers le monde",
+       caption = "@clemleconte -- sept2019") +
+   guides(colour = guide_legend(override.aes = list(size = 10))) #change la taille de la légende
+
+
+# Sauvegarder la carte au format PNG
+ggsave(
+  "nuclear_explosions.png",
+  plot = plot1,
+  width = 50,
+  height = 30,
+  units = "cm"
+)
+plot1
+
+```
+<br/>Cette carte qui représente la localisation des différentes explosions nucléaires en fonction du pays "reponsables" de ces explosions, nous permet de voir que la majorité des explosions orchestrées par l'URSS et les Etats-Unis ont eu lieu sur leur propre territoire. Les pays essayent également de répartir les explosions au milieu de l'océan (notamment pacifique), où nous pouvons observer de nouveaux tests de la part de la France (archipel des Tuomotu), des Etats-Unis (îles Marshall) et le Royaume-Uni (île Christmas). On peut également observer les deux bombes nucléaires lâchées sur le Japon par les Etats-Unis durant la seconde guerre mondiale. Il est également important de rappeler que la majorité des explosions nucléaires ont lieu dans des sous-sols, afin d'éviter tout impact sur le monde extérieur.
+
+
+## Conclusion
+
+Les données mises à disposition par SIPRI nous ont permis de répondre à de nombreuses questions sur les différentes explosions nucléaires ayant eu lieu à travers le monde. Ce sont les Etats-Unis et la Russie qui en sont les principaux acteurs avec une course à l'armement durant la guerre froide qui les y a poussé. La majorité de ces explosions ont pour objectif de tester des armes nucléaires. Ces explosions ont principalement eu lieu sur le territoire des nations les organisant, et à des endroits isolés de la population (déserts, océan).
